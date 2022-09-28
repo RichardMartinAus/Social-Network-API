@@ -25,7 +25,7 @@ Below is a screenshot of the application in Insomnia:
 
 ![Screenshot of app in insomnia](assets/images/screenshot01.jpg?raw=true)
 
-Here is a link to a demo video:
+Here is a link to a demo video: https://drive.google.com/file/d/1ZJ6OIhIolhLRc3N42Wxppf-R0HHUvhj5/view
 
 ## License
 
