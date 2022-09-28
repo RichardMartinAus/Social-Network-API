@@ -1,4 +1,3 @@
-const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
 module.exports = {
@@ -33,9 +32,13 @@ module.exports = {
       .then((user) => res.json(user))
       .catch((err) => res.status(500).json(err));
   },
-  // Delete a user
-  deleteUser(req, res) {
-    User.findOneAndRemove({ _id: req.params.userId })
+  // update a user
+  updateUser(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
       .then((user) =>
         !user
           ? res.status(404).json({ message: 'No such user exists' })
@@ -46,43 +49,55 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+  // Delete a user
+  deleteUser(req, res) {
+    User.findOneAndDelete({ _id: req.params.userId })
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No such user exists' })
+          : res.json({ message: 'User deleted!' })
+      )
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
 
-  //   // Add an assignment to a student
-  //   addAssignment(req, res) {
-  //     console.log('You are adding an assignment');
-  //     console.log(req.body);
-  //     Student.findOneAndUpdate(
-  //       { _id: req.params.studentId },
-  //       { $addToSet: { assignments: req.body } },
-  //       { runValidators: true, new: true }
-  //     )
-  //       .then((student) =>
-  //         !student
-  //           ? res
-  //               .status(404)
-  //               .json({ message: 'No student found with that ID :(' })
-  //           : res.json(student)
-  //       )
-  //       .catch((err) => res.status(500).json(err));
-  //   },
-  //   // Remove assignment from a student
-  //   removeAssignment(req, res) {
-  //     Student.findOneAndUpdate(
-  //       { _id: req.params.studentId },
-  //       { $pull: { assignment: { assignmentId: req.params.assignmentId } } },
-  //       { runValidators: true, new: true }
-  //     )
-  //       .then((student) =>
-  //         !student
-  //           ? res
-  //               .status(404)
-  //               .json({ message: 'No student found with that ID :(' })
-  //           : res.json(student)
-  //       )
-  //       .catch((err) => res.status(500).json(err));
-  //   },
+  //  add friend
+  addFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      {
+        $addToSet: { friends: req.params.friendId },
+      },
+      { runValidators: true, new: true }
+    )
+      .then(async (users) => {
+        return res.json(users);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json(err);
+      });
+  },
+
+  //  remove friend
+  deleteFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      {
+        $pull: { friends: req.params.friendId },
+      }
+    )
+      .then(async (users) => {
+        return res.json(users);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json(err);
+      });
+  },
 };
-
 // const router = require('express').Router();
 
 // const {
